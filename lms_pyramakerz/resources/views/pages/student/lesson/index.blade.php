@@ -93,7 +93,9 @@
             </div>
         </div>
 
-        <div id="ebook-content" class="relative">
+        <!-- <div id="ebook-content" class="relative"> -->
+        <iframe id="ebook-frame" style="display:none" class="relative" width="100%" height="90%"></iframe>
+
         </div>
     </div>
 </div>
@@ -101,13 +103,18 @@
 @section('page_js')
     <script>
         function openModal(lessonId, filePath) {
-            let modalContent = `
-            <embed src="${filePath}" width="100%" height="90%" />
-           
-        `;
-            document.getElementById('ebook-content').innerHTML = modalContent;
+            const iframe = document.getElementById('ebook-frame');
+            iframe.src = filePath;
+
+            iframe.onload = () => {
+                const doc = iframe.contentWindow.document;
+                const bar = doc.querySelector('.buttonBar.right');
+                if (bar) bar.style.display = 'none';
+            };
 
             document.getElementById('ebook').classList.remove("hidden");
+            document.getElementById('ebook').classList.add("fixed");
+            iframe.style.display = 'block';
         }
 
         function closeModal(id) {

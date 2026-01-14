@@ -115,7 +115,9 @@
             </div>
         </div>
 
-        <div class="relative" id="ebook-content">
+        <!-- <div class="relative" id="ebook-content"> -->
+        <iframe id="ebook-frame" class="relative" width="100%" height="90%"></iframe>
+
         </div>
     </div>
 </div>
@@ -133,7 +135,9 @@
             </div>
         </div>
 
-        <div class="relative" id="use-content">
+        <!-- <div class="relative" id="use-content"> -->
+        <iframe id="use-frame" class="relative" width="100%" height="90%"></iframe>
+
         </div>
     </div>
 </div>
@@ -151,7 +155,9 @@
             </div>
         </div>
 
-        <div class="relative" id="learn-content">
+        <!-- <div class="relative" id="learn-content"> -->
+        <iframe id="learn-frame" class="relative" width="100%" height="90%"></iframe>
+
         </div>
     </div>
 </div>
@@ -160,16 +166,40 @@
 @section('page_js')
     <script>
         function openModal(id, filePath) {
-            let modalContent = `
-            <embed src="${filePath}" width="100%" height="90%" />
-            <img src="{{ asset('assets/img/watermark 2.png') }}" 
-                class="absolute inset-0 w-full h-full opacity-50 z-10"
-                style="pointer-events: none;">
-        `;
-            document.getElementById(id + '-content').innerHTML = modalContent;
-            document.getElementById(id).classList.remove("hidden");
-        }
+            const iframe = document.getElementById(id + '-frame');
 
+            
+
+            // Set the iframe src
+            iframe.src = filePath;
+
+            // When iframe is loaded
+            iframe.onload = () => {
+                const doc = iframe.contentWindow.document;
+
+                // Remove the .buttonBar.right if it exists
+                const bar = doc.querySelector('.buttonBar.right');
+                if (bar) bar.style.display = 'none';
+
+                // Optional: add a watermark overlay (like you had before)
+                const watermark = doc.createElement('img');
+                watermark.src = "{{ asset('assets/img/watermark 2.png') }}";
+                watermark.style.position = 'absolute';
+                watermark.style.top = '0';
+                watermark.style.left = '0';
+                watermark.style.width = '100%';
+                watermark.style.height = '100%';
+                watermark.style.opacity = '0.5';
+                watermark.style.zIndex = '10';
+                watermark.style.pointerEvents = 'none';
+                doc.body.appendChild(watermark);
+
+            };
+
+            // Show modal
+            document.getElementById(id).classList.remove("hidden");
+            document.getElementById(id).classList.add("fixed");
+        }
         function closeModal(id) {
             document.getElementById(id).classList.add("hidden");
         }

@@ -24,6 +24,24 @@ class DashboardController extends Controller
             return redirect()->route('login')->withErrors(['error' => 'Unauthorized access']);
         }
     }
+
+    public function curriculum()
+    {
+        $userAuth = auth()->guard('student')->user();
+
+        if ($userAuth) {
+            $materials = Material::whereHas('materialSchools', function ($query) use ($userAuth) {
+                $query->where('school_id', $userAuth->school_id);
+            })
+                ->where('stage_id', $userAuth->stage_id)
+                ->with(['units.chapters.lessons'])
+                ->get();
+
+            return view('pages.student.curriculum.index', compact('materials', 'userAuth'));
+        }
+
+        return redirect()->route('login')->withErrors(['error' => 'Unauthorized access']);
+    }
     public function index()
     {
         // $student = auth()->guard('student')->user();

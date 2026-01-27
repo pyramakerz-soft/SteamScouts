@@ -228,6 +228,7 @@ Route::get('/student/dashboard', [DashboardController::class, 'index'])->middlew
 
 Route::get('/theme', [DashboardController::class, 'theme'])->name('student.theme');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('student.index');
+Route::get('/curriculum', [DashboardController::class, 'curriculum'])->name('student.curriculum');
 
 Route::get('/materials/{materialId}/units', [ControllersUnitController::class, 'index'])->name('student_units.index');
 Route::get('/units/{unitId}', [ControllersUnitController::class, 'unitContent'])->name('student_units.unitContent');

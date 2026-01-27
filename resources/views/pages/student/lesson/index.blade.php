@@ -49,13 +49,26 @@
         <a href="#" class="mx-2 cursor-pointer">lessons</a>
     </div>
 
+    <div class="p-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold text-[#17253E]">Lesson Preview</h2>
+                <span id="lesson-title" class="text-sm text-gray-500">Select a lesson to preview.</span>
+            </div>
+            <div class="w-full h-[70vh] border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                <iframe id="lesson-iframe" title="Lesson preview" class="w-full h-full" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
     <div class="flex flex-wrap p-3">
         @if (!count($chapter->lessons) == 0)
             @foreach ($chapter->lessons as $lesson)
                 <div class="mb-7 w-full md:w-[45%] lg:w-[30%] p-2 mx-2 bg-white  rounded-xl">
                     <div class="w-full">
-                        <a onclick="event.stopPropagation(); event.preventDefault(); openModal('ebook', '{{ $lesson->file_path }}');"
-                            class="cursor-pointer h-full flex flex-col justify-between">
+                        <button type="button"
+                            onclick="setLessonPreview(@json($lesson->file_path), @json($lesson->title))"
+                            class="w-full text-left cursor-pointer h-full flex flex-col justify-between">
                             <!-- Updated title to handle long text -->
                             <h3 class="px-4 py-2 bg-gray-200 text-lg font-bold truncate"
                                 style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
@@ -67,7 +80,7 @@
                                     alt="{{ $lesson->title }}">
 
                             </div>
-                        </a>
+                        </button>
                     </div>
                 </div>
             @endforeach
@@ -78,41 +91,13 @@
 @endsection
 
 
-
-{{-- ------------------------------------------------------------------------------------------------------------------ --}}
-
-{{-- Learning Modal --}}
-<div id="ebook" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10 hidden">
-    <div class="bg-white rounded-lg shadow-lg h-[95vh] overflow-y-scroll w-[90%]"  style="height: 95% !important">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 class="text-lg font-semibold text-gray-900">
-                EBook
-            </h3>
-            <div class="flex justify-end">
-                <button onclick="closeModal('ebook')"
-                    class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">Close</button>
-            </div>
-        </div>
-
-        <div id="ebook-content" class="relative">
-        </div>
-    </div>
-</div>
-
 @section('page_js')
     <script>
-        function openModal(lessonId, filePath) {
-            let modalContent = `
-            <embed src="${filePath}" width="100%" height="90%" />
-           
-        `;
-            document.getElementById('ebook-content').innerHTML = modalContent;
-
-            document.getElementById('ebook').classList.remove("hidden");
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.add("hidden");
+        function setLessonPreview(filePath, title) {
+            const iframe = document.getElementById('lesson-iframe');
+            const lessonTitle = document.getElementById('lesson-title');
+            iframe.src = filePath;
+            lessonTitle.textContent = title;
         }
     </script>
 @endsection

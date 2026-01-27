@@ -50,15 +50,33 @@
         <a href="#" class="mx-2 cursor-pointer">Curriculum</a>
     </div>
 
+    <div class="p-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold text-[#17253E]">Lesson Preview</h2>
+                <span id="lesson-title" class="text-sm text-gray-500">Select a lesson to preview.</span>
+            </div>
+            <div class="w-full h-[70vh] border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                <iframe id="lesson-iframe" title="Lesson preview" class="w-full h-full" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
     <div class="p-3 space-y-6">
         @forelse ($materials as $material)
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                 <details class="group" open>
                     <summary
                         class="flex items-center justify-between px-6 py-4 cursor-pointer text-[#17253E] font-semibold text-lg">
-                        <div>
-                            <div>{{ $material->title }}</div>
-                            <div class="text-sm text-gray-500 font-normal">{{ $material->units->count() }} Units</div>
+                        <div class="flex items-center gap-4">
+                            <img class="w-16 h-16 rounded-lg object-cover"
+                                src="{{ $material->image ?: asset('images/defaultCard.webp') }}"
+                                alt="{{ $material->title }}">
+                            <div>
+                                <div>{{ $material->title }}</div>
+                                <div class="text-sm text-gray-500 font-normal">{{ $material->units->count() }} Units
+                                </div>
+                            </div>
                         </div>
                         <span class="text-[#FF7519] transition-transform group-open:rotate-180">
                             <i class="fa-solid fa-chevron-down"></i>
@@ -70,13 +88,18 @@
                             <details class="group rounded-lg border border-gray-100">
                                 <summary
                                     class="flex items-center justify-between px-4 py-3 cursor-pointer text-[#17253E] font-semibold">
-                                    <div>
-                                        <a href="{{ route('student_units.unitContent', $unit->id) }}"
-                                            class="hover:underline">
-                                            {{ $unit->title }}
-                                        </a>
-                                        <div class="text-xs text-gray-500 font-normal">
-                                            {{ $unit->chapters->count() }} Chapters
+                                    <div class="flex items-center gap-4">
+                                        <img class="w-14 h-14 rounded-lg object-cover"
+                                            src="{{ $unit->image ?: asset('images/defaultCard.webp') }}"
+                                            alt="{{ $unit->title }}">
+                                        <div>
+                                            <a href="{{ route('student_units.unitContent', $unit->id) }}"
+                                                class="hover:underline">
+                                                {{ $unit->title }}
+                                            </a>
+                                            <div class="text-xs text-gray-500 font-normal">
+                                                {{ $unit->chapters->count() }} Chapters
+                                            </div>
                                         </div>
                                     </div>
                                     <span class="text-[#FF7519] transition-transform group-open:rotate-180">
@@ -89,13 +112,18 @@
                                         <details class="group rounded-lg border border-gray-100 bg-gray-50">
                                             <summary
                                                 class="flex items-center justify-between px-4 py-3 cursor-pointer text-[#17253E]">
-                                                <div>
-                                                    <a href="{{ route('student_lessons.index', $chapter->id) }}"
-                                                        class="font-semibold hover:underline">
-                                                        {{ $chapter->title }}
-                                                    </a>
-                                                    <div class="text-xs text-gray-500">
-                                                        {{ $chapter->lessons->count() }} Lessons
+                                                <div class="flex items-center gap-4">
+                                                    <img class="w-12 h-12 rounded-lg object-cover"
+                                                        src="{{ $chapter->image ?: asset('images/defaultCard.webp') }}"
+                                                        alt="{{ $chapter->title }}">
+                                                    <div>
+                                                        <a href="{{ route('student_lessons.index', $chapter->id) }}"
+                                                            class="font-semibold hover:underline">
+                                                            {{ $chapter->title }}
+                                                        </a>
+                                                        <div class="text-xs text-gray-500">
+                                                            {{ $chapter->lessons->count() }} Lessons
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <span class="text-[#FF7519] transition-transform group-open:rotate-180">
@@ -104,13 +132,19 @@
                                             </summary>
 
                                             <div class="px-4 pb-4">
-                                                <ul class="ml-4 list-disc space-y-2 text-sm text-gray-600">
+                                                <ul class="ml-2 space-y-3 text-sm text-gray-600">
                                                     @forelse ($chapter->lessons as $lesson)
-                                                        <li class="flex items-center justify-between">
-                                                            <a href="{{ route('student_lessons.ebooks', $lesson->id) }}"
-                                                                class="text-[#17253E] hover:underline">
-                                                                {{ $lesson->title }}
-                                                            </a>
+                                                        <li class="flex items-center justify-between gap-3">
+                                                            <button type="button"
+                                                                onclick="setLessonPreview(@json($lesson->file_path), @json($lesson->title))"
+                                                                class="flex items-center gap-3 text-left">
+                                                                <img class="w-12 h-12 rounded-md object-cover"
+                                                                    src="{{ $lesson->image ?: asset('images/defaultCard.webp') }}"
+                                                                    alt="{{ $lesson->title }}">
+                                                                <span class="text-[#17253E] hover:underline">
+                                                                    {{ $lesson->title }}
+                                                                </span>
+                                                            </button>
                                                             <span class="text-xs text-gray-400">Lesson</span>
                                                         </li>
                                                     @empty
@@ -173,5 +207,12 @@
 
     function closeModal(id) {
         document.getElementById(id).classList.add("hidden");
+    }
+
+    function setLessonPreview(filePath, title) {
+        const iframe = document.getElementById('lesson-iframe');
+        const lessonTitle = document.getElementById('lesson-title');
+        iframe.src = filePath;
+        lessonTitle.textContent = title;
     }
 </script>

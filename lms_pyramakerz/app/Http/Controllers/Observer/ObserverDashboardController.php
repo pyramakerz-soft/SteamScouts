@@ -614,6 +614,7 @@ class ObserverDashboardController extends Controller
 
             // If already converted -> load
             $existing = glob($outputDir . '/*.png');
+            natsort($existing);
             if (count($existing) > 0) {
                 foreach ($existing as $img) {
                     // Return as /converted/filename.png
@@ -632,6 +633,12 @@ class ObserverDashboardController extends Controller
                     if (!$files || !is_array($files)) {
                         throw new \RuntimeException("Cloud conversion failed for $file");
                     }
+
+                    usort($files, function ($a, $b) {
+                        preg_match('/(\d+)/', $a['FileName'] ?? '', $aMatch);
+                        preg_match('/(\d+)/', $b['FileName'] ?? '', $bMatch);
+                        return ((int)($aMatch[1] ?? 0)) <=> ((int)($bMatch[1] ?? 0));
+                    });
 
                     foreach ($files as $index => $cloudFile) {
                         if (!isset($cloudFile['FileData'])) continue;

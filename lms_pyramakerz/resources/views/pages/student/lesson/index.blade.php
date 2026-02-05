@@ -53,20 +53,45 @@
             @foreach ($chapter->lessons as $lesson)
                 <div class="mb-7 w-full md:w-[45%] lg:w-[30%] p-2 mx-2 bg-white  rounded-xl">
                     <div class="w-full">
-                        <a onclick="event.stopPropagation(); event.preventDefault(); openModal('ebook', '{{ $lesson->file_path }}');"
+                        <div onclick="openModal('ebook', '{{ $lesson->file_path }}');"
                             class="cursor-pointer h-full flex flex-col justify-between">
-                            <!-- Updated title to handle long text -->
-                            <h3 class="px-4 py-2 bg-gray-200 text-lg font-bold truncate"
-                                style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+
+                            <h3 class="px-4 py-2 bg-gray-200 text-lg font-bold truncate">
                                 {{ $lesson->title }}
                             </h3>
+
                             <div class="p-4">
                                 <img class="object-contain w-full h-[250px] rounded-xl"
                                     src="{{ $lesson->image ? asset($lesson->image) : asset('images/defaultCard.webp') }}"
                                     alt="{{ $lesson->title }}">
-
                             </div>
-                        </a>
+
+                            {{-- Video Links --}}
+                            @if ($lesson->video_file_path || $lesson->video_url)
+                                <div class="mt-3 flex flex-col space-y-2 text-sm px-4">
+
+                                    @if ($lesson->video_file_path)
+                                        <a href="{{ asset($lesson->video_file_path) }}"
+                                        target="_blank"
+                                        onclick="event.stopPropagation();"
+                                        class="text-green-800 hover:underline flex items-center gap-2">
+                                            🎥 Watch Video
+                                        </a>
+                                    @endif
+
+                                    @if ($lesson->video_url)
+                                        <a href="{{ $lesson->video_url }}"
+                                        target="_blank"
+                                        onclick="event.stopPropagation();"
+                                        class="text-green-600 hover:underline flex items-center gap-2">
+                                            🔗 Watch Video (Link)
+                                        </a>
+                                    @endif
+
+                                </div>
+                            @endif
+
+                        </div>
                     </div>
                 </div>
             @endforeach

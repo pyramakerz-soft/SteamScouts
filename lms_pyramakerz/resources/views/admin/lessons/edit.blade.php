@@ -95,6 +95,44 @@
                                 {{ $lesson->is_active ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_active">Active</label>
                         </div>
+                        <div class="mb-3">
+                            <label for="video_file_path" class="form-label">Upload Video</label>
+                            <input
+                                type="file"
+                                name="video_file_path"
+                                class="form-control"
+                                id="video_file_path"
+                                accept="video/mp4,video/webm,video/ogg"
+                            >
+
+                            @if ($lesson->video_file_path)
+                                <p class="mt-2">
+                                    Current Video File:
+                                    <a href="{{ asset( $lesson->video_file_path) }}" target="_blank">
+                                        View Video
+                                    </a>
+                                </p>
+                            @endif
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="video_url" class="form-label">Video Link</label>
+                            <input
+                                type="url"
+                                name="video_url"
+                                class="form-control"
+                                id="video_url"
+                                value="{{ old('video_url', $lesson->video_url) }}">
+
+                            @if ($lesson->video_url)
+                                <p class="mt-2">
+                                    Current Video Link:
+                                    <a href="{{ $lesson->video_url }}" target="_blank">
+                                        {{ $lesson->video_url }}
+                                    </a>
+                                </p>
+                            @endif
+                        </div>
 
                         <button type="submit" class="btn btn-primary">Update Lesson</button>
                     </form>

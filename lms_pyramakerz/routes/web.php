@@ -88,7 +88,7 @@ Route::prefix('admin')->group(function () {
         Route::resource('material', MaterialController::class);
         Route::resource('units', UnitController::class);
         Route::resource('chapters', ChapterController::class);
-        Route::resource('lessons', LessonController::class);
+        Route::resource('lessons', LessonConctroller::class);
         Route::resource('stages', StageController::class);
         Route::resource('lesson_resource', LessonResourceController::class);
         Route::get('/lesson-resource/schools/{lessonId}', [LessonResourceController::class, 'getSchoolsByLesson'])

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Chapter;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class LessonController extends Controller
 {
@@ -211,16 +212,32 @@ class LessonController extends Controller
             $lesson->teacher_file_path = $teacherFilePath;
         }
 
+        if($request->hasFile('video_file_path')) {
+            $file = $request->file('video_file_path');
+            $basePath = public_path('lesson_videos');
+
+            if (!File::exists($basePath)) 
+                File::makeDirectory($basePath, 0777, true, true);
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = 'lesson_videos/' . $fileName;
+
+            $file->move($basePath, $fileName);
+            $lesson->video_file_path = $filePath;
+        }
+        
         $lesson->update([
             'title' => $request->title,
             'chapter_id' => $request->chapter_id,
             'file_path' => $request->file_path,
+            'video_url' => $request->video_url,
             'teacher_file_path' => $request->teacher_file_path,
             'is_active' => $request->is_active ?? 0,
         ]);
 
         return redirect()->route('lessons.index')->with('success', 'Lesson updated successfully.');
     }
+    
 
 
     /**

@@ -54,8 +54,9 @@
 
                         <!-- Changed file input to select input -->
                         <div class="mb-3">
-                            <label for="file_path" class="form-label">Select Ebook</label>
+                            <label for="file_path" class="form-label">Select Student Ebook</label>
                             <select name="file_path" class="form-control" id="file_path">
+                                <option value="">No ebook selected</option>
                                 @foreach (\App\Models\Ebook::all() as $ebook)
                                     <option value="{{ $ebook->file_path }}"
                                         {{ Str::contains($lesson->file_path, $ebook->file_path) ? 'selected' : '' }}>
@@ -66,7 +67,25 @@
                             @if ($lesson->file_path)
                                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
                                     data-bs-target="#ebookModal" data-file="{{ asset($lesson->file_path) }}">
-                                    View Ebook
+                                    View Student Ebook
+                                </button>
+                            @endif
+                        </div>
+                        <div class="mb-3">
+                            <label for="teacher_file_path" class="form-label">Select Teacher Ebook</label>
+                            <select name="teacher_file_path" class="form-control" id="teacher_file_path">
+                                <option value="">No ebook selected</option>
+                                @foreach (\App\Models\Ebook::all() as $ebook)
+                                    <option value="{{ $ebook->file_path }}"
+                                        {{ Str::contains($lesson->teacher_file_path, $ebook->file_path) ? 'selected' : '' }}>
+                                        {{ $ebook->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if ($lesson->teacher_file_path)
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#ebookModal" data-file="{{ asset($lesson->teacher_file_path) }}">
+                                    View Teacher Ebook
                                 </button>
                             @endif
                         </div>

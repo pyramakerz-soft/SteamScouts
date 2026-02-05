@@ -38,7 +38,8 @@
                 <div class=" bg-white ">
 
                     <div class="p-4">
-                        <button onclick="  openModal('ebook', `{{ $lesson->file_path }}`);" class="object-cover w-full">
+                        <button onclick="handleLessonClick(`{{ $lesson->file_path }}`,`{{ $lesson->teacher_file_path }}`)"
+                        class="object-cover w-full">
                             <img src="{{ $lesson->image ? asset($lesson->image) : asset('images/defaultCard.webp') }}"
                                 alt="{{ $lesson->title }}">
                         </button>
@@ -73,33 +74,127 @@
         <!-- <div id="ebook-content" class="relative"> -->
         <iframe id="ebook-frame" style="display:none" class="relative" width="100%" height="90%"></iframe>
 
-        </div>
     </div>
 </div>
+
+<div id="ebookChooser" class="inset-0 bg-gray-800 bg-opacity-50 hidden z-[1000] flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-[300px] text-center">
+        <h3 class="text-lg font-semibold mb-4">Choose Ebook</h3>
+
+        <p id="noEbookMsg" class="text-gray-500 mb-4 hidden">
+            No ebooks available
+        </p>
+
+        <button
+            id="studentBtn"
+            class="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded hidden"
+        >
+            Student Ebook
+        </button>
+
+        <button
+            id="teacherBtn"
+            class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded hidden"
+        >
+            Teacher Ebook
+        </button>
+
+        <button onclick="closeChooser()" class="mt-4 text-gray-500 text-sm">
+            Cancel
+        </button>
+    </div>
+</div>
+
+
 {{-- <img src="{{ asset('assets/img/watermark 2.png') }}" 
 class="absolute inset-0 w-full h-full opacity-50 z-10"
 style="pointer-events: none;"> --}}
 @section('page_js')
-    <script>
-        function openModal(lessonId, filePath) {
-            const iframe = document.getElementById('ebook-frame');
-            iframe.src = filePath;
+<script>
+    function handleLessonClick(studentPath, teacherPath) {
 
-            iframe.onload = () => {
-                const doc = iframe.contentWindow.document;
-                const bar = doc.querySelector('.buttonBar.right');
-                if (bar) bar.style.display = 'none';
-            };
+        const hasStudent = studentPath && studentPath !== "";
+        const hasTeacher = teacherPath && teacherPath !== "";
 
-            document.getElementById('ebook').classList.remove("hidden");
-            document.getElementById('ebook').classList.add("fixed");
-            iframe.style.display = 'block';
+        // If both exist → show chooser
+        if (hasStudent && hasTeacher) {
+            openChooser(studentPath, teacherPath);
+            return;
         }
 
-
-        function closeModal(id) {
-            document.getElementById(id).classList.add("hidden");
-            document.getElementById('ebook').classList.remove("fixed");
+        // Otherwise open the one that exists
+        if (hasTeacher) {
+            openEbook(teacherPath);
+        } else if (hasStudent) {
+            openEbook(studentPath);
         }
-    </script>
+    }
+
+    function openChooser(studentPath, teacherPath) {
+    const chooser = document.getElementById('ebookChooser');
+    const studentBtn = document.getElementById('studentBtn');
+    const teacherBtn = document.getElementById('teacherBtn');
+    const noMsg = document.getElementById('noEbookMsg');
+
+    // reset state
+    studentBtn.classList.add('hidden');
+    teacherBtn.classList.add('hidden');
+    noMsg.classList.add('hidden');
+
+    const hasStudent = studentPath && studentPath !== "";
+    const hasTeacher = teacherPath && teacherPath !== "";
+
+    if (!hasStudent && !hasTeacher) {
+        noMsg.classList.remove('hidden');
+    }
+
+    if (hasStudent) {
+        studentBtn.classList.remove('hidden');
+        studentBtn.onclick = () => {
+            closeChooser();
+            openEbook(studentPath);
+        };
+    }
+
+    if (hasTeacher) {
+        teacherBtn.classList.remove('hidden');
+        teacherBtn.onclick = () => {
+            closeChooser();
+            openEbook(teacherPath);
+        };
+    }
+
+    chooser.classList.remove('hidden');
+    chooser.classList.add('fixed');
+}
+
+
+    function closeChooser() {
+        const chooser = document.getElementById('ebookChooser');
+        chooser.classList.add('hidden');
+        chooser.classList.remove('fixed');
+    }
+
+    function openEbook(filePath) {
+        const iframe = document.getElementById('ebook-frame');
+        iframe.src = filePath;
+
+        iframe.onload = () => {
+            const doc = iframe.contentWindow.document;
+            const bar = doc.querySelector('.buttonBar.right');
+            if (bar) bar.style.display = 'none';
+        };
+
+        document.getElementById('ebook').classList.remove("hidden");
+        document.getElementById('ebook').classList.add("fixed");
+        iframe.style.display = 'block';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        document.getElementById('ebook').classList.remove("fixed");
+        document.getElementById('ebook-frame').src = "";
+    }
+</script>
 @endsection
+

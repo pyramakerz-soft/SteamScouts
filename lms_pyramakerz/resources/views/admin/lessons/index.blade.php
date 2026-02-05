@@ -67,10 +67,20 @@
                                     <tr>
                                         <td>{{ $lesson->title }}</td>
                                         <td>
-                                            <button class="btn btn-success" data-bs-toggle="modal"
-                                                data-bs-target="#ebookModal" data-file="{{ asset($lesson->file_path) }}">
-                                                View Ebook
+                                            @if ($lesson->file_path)
+                                                <button class="btn btn-success" data-bs-toggle="modal"
+                                                    data-bs-target="#ebookModal" data-file="{{ asset($lesson->file_path) }}">
+                                                    View Student Ebook
+                                                </button>    
+                                            @endif
+                                            
+
+                                            @if($lesson->teacher_file_path)
+                                                <button class="btn btn-success" data-bs-toggle="modal"
+                                                data-bs-target="#ebookModal" data-file="{{ asset($lesson->teacher_file_path) }}">
+                                                View Teacher Ebook
                                             </button>
+                                            @endif
                                         </td>
                                         <td>{{ $lesson->chapter->material->title ?? '-' }}</td>
                                         <td>{{ $lesson->chapter->unit->title ?? '-' }}</td>

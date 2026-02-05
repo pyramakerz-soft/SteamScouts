@@ -93,6 +93,8 @@ class TeacherDashboardController extends Controller
             })
             ->with('lessons')
             ->findOrFail($chapterId);
+        
+        
 
         return view('pages.teacher.lessons', compact('chapter'));
     }

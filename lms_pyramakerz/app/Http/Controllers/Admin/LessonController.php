@@ -206,10 +206,16 @@ class LessonController extends Controller
             $lesson->file_path = $filePath;
         }
 
+        if ($request->hasFile('teacher_file_path')) {
+            $teacherFilePath = $request->file('teacher_file_path')->store('teacher_ebooks', 'public');
+            $lesson->teacher_file_path = $teacherFilePath;
+        }
+
         $lesson->update([
             'title' => $request->title,
             'chapter_id' => $request->chapter_id,
             'file_path' => $request->file_path,
+            'teacher_file_path' => $request->teacher_file_path,
             'is_active' => $request->is_active ?? 0,
         ]);
 
